@@ -13,6 +13,7 @@ type Config struct {
 	module          string
 	version         string
 	env             string
+	debug           bool
 }
 
 type Option func(*Config)
@@ -62,5 +63,11 @@ func Version(version string) Option {
 func Env(env string) Option {
 	return func(c *Config) {
 		c.env = env
+	}
+}
+
+func Debug(debug bool) Option {
+	return func(c *Config) {
+		c.debug = debug
 	}
 }

@@ -20,6 +20,7 @@ func InitialLogConfig(opts ...Option) {
 		module:          "unknown-module",
 		version:         "unknown-version",
 		env:             "unknown-env",
+		debug:           false,
 	}
 	for _, opt := range opts {
 		opt(config)
@@ -34,6 +35,7 @@ func InitialLogConfig(opts ...Option) {
 		Module:          config.module,
 		Version:         config.version,
 		Env:             config.env,
+		Debug:           config.debug,
 	})
 }
 
@@ -44,10 +46,14 @@ type CustomizeFormatter struct {
 	Module          string
 	Version         string
 	Env             string
+	Debug           bool
 }
 
 func (cf *CustomizeFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	timestamp := fmt.Sprintf(entry.Time.Format(cf.TimestampFormat))
+	if cf.Debug {
+		return []byte(fmt.Sprintf("[%s] %s\n", timestamp, entry.Message)), nil
+	}
 	return []byte(fmt.Sprintf("[%s] [%s] [%s] [%s] [%s] [%s] [%s] [%s] - %s\n", timestamp, cf.Project, cf.Module, cf.Env, cf.Version, goroutineId(), cf.LevelDesc[entry.Level], findCaller(entry.Caller), entry.Message)), nil
 }
 
